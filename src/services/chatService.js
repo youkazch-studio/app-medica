@@ -1,15 +1,26 @@
-// src/services/chatService.js
+/**
+ * Servicio CRUD para chats y mensajes en Firestore.
+ *
+ * Proporciona funciones para crear, leer y eliminar chats,
+ * así como enviar y suscribirse a mensajes en tiempo real.
+ *
+ * @module chatService
+ */
 import { db } from '../firebase/config';
 import { collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, deleteDoc, getDoc, limit, limitToLast } from 'firebase/firestore';
 
-// 1. Crear un Nuevo Chat (Añadimos updatedAt)
+/**
+ * Crea un nuevo chat para un usuario.
+ * @param {string} userId - ID del usuario autenticado
+ * @returns {Promise<string|null>} ID del nuevo chat o null si falla
+ */
 export const createNewChat = async (userId) => {
   try {
     const chatsRef = collection(db, "chats");
     const newChatRef = await addDoc(chatsRef, {
       userId: userId,
       createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(), // <--- IMPORTANTE: Fecha para ordenar
+      updatedAt: serverTimestamp(),
       title: "Nuevo Chat"
     });
     return newChatRef.id;
@@ -19,7 +30,10 @@ export const createNewChat = async (userId) => {
   }
 };
 
-// 2. Eliminar un Chat
+/**
+ * Elimina un chat por su ID.
+ * @param {string} chatId - ID del chat a eliminar
+ */
 export const deleteChat = async (chatId) => {
   try {
     const chatRef = doc(db, "chats", chatId);
@@ -29,7 +43,13 @@ export const deleteChat = async (chatId) => {
   }
 };
 
-// 3. Suscribirse a la lista de chats (ORDENADO POR INTERACCIÓN)
+/**
+ * Se suscribe en tiempo real a la lista de chats del usuario, ordenados por última interacción.
+ * @param {string} userId - ID del usuario
+ * @param {number|Function} [limitAmount=20] - Cantidad máxima de chats, o callback si se omite
+ * @param {Function} [callback] - Función que recibe el array de chats
+ * @returns {Function} Función para desuscribirse del snapshot
+ */
 export const subscribeToUserChats = (userId, arg2, arg3) => {
   let limitAmount = 20;
   let callback = arg2;
@@ -40,8 +60,6 @@ export const subscribeToUserChats = (userId, arg2, arg3) => {
   }
 
   const chatsRef = collection(db, "chats");
-  
-  // CAMBIO CLAVE: Ordenar por 'updatedAt' descendente
   const q = query(
     chatsRef, 
     where("userId", "==", userId), 
@@ -60,7 +78,13 @@ export const subscribeToUserChats = (userId, arg2, arg3) => {
   });
 };
 
-// 4. Suscribirse a mensajes
+/**
+ * Se suscribe en tiempo real a los mensajes de un chat, con paginación.
+ * @param {string} chatId - ID del chat
+ * @param {number|Function} [limitAmount=20] - Cantidad de mensajes a cargar, o callback
+ * @param {Function} [callback] - Función que recibe el array de mensajes
+ * @returns {Function} Función para desuscribirse
+ */
 export const subscribeToChatMessages = (chatId, arg2, arg3) => {
   let limitAmount = 20;
   let callback = arg2;
@@ -88,7 +112,14 @@ export const subscribeToChatMessages = (chatId, arg2, arg3) => {
   });
 };
 
-// 5. Enviar mensaje y actualizar fecha
+/**
+ * Envía un mensaje a Firestore y actualiza los metadatos del chat padre.
+ * Si el título del chat sigue siendo "Nuevo Chat", lo renombra con el primer mensaje.
+ * @param {string} chatId - ID del chat
+ * @param {string} message - Texto del mensaje
+ * @param {'user'|'ai'} sender - Remitente del mensaje
+ * @param {{ url: string, type: string, name: string } | null} fileData - Datos del archivo adjunto (opcional)
+ */
 export const sendMessageToFirestore = async (chatId, message, sender, fileData = null) => {
   try {
     const messagesRef = collection(db, "chats", chatId, "messages");
@@ -107,16 +138,13 @@ export const sendMessageToFirestore = async (chatId, message, sender, fileData =
 
     await addDoc(messagesRef, messageData);
 
-    // Actualizar el chat padre
     if (sender === 'user') {
       const chatRef = doc(db, "chats", chatId);
-      // Actualizamos 'updatedAt' para que el chat suba al inicio de la lista
       let updates = { 
         lastMessage: message,
         updatedAt: serverTimestamp() 
       };
 
-      // Si el título es genérico, lo actualizamos
       const chatSnap = await getDoc(chatRef);
       if (chatSnap.exists() && chatSnap.data().title === "Nuevo Chat") {
         const cleanMessage = message.replace(/\[.*?\]/g, '').trim();
@@ -133,7 +161,11 @@ export const sendMessageToFirestore = async (chatId, message, sender, fileData =
   }
 };
 
-// 6. Formatear hora (Igual)
+/**
+ * Formatea un timestamp de Firestore como texto relativo en español.
+ * @param {import('firebase/firestore').Timestamp} timestamp - Timestamp de Firestore
+ * @returns {string} Texto como "hace 5 min" o "hace 2 h"
+ */
 export const formatRelativeTime = (timestamp) => {
   if (!timestamp) return '';
   const date = timestamp.toDate();

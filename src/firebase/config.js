@@ -1,11 +1,18 @@
-// src/firebase/config.js
+/**
+ * Configuración híbrida de Firebase con dos proyectos separados.
+ *
+ * Arquitectura:
+ * - Proyecto GRUPO (app-medica-3d3be): Auth + Firestore
+ * - Proyecto PRIVADO (claridoc-backend-kevin): Storage para archivos médicos
+ *
+ * Esto aísla los documentos sensibles en un proyecto independiente.
+ */
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage"; // Importamos Storage
+import { getStorage } from "firebase/storage";
 
-// --- 1. CONFIGURACIÓN DEL PROYECTO DEL GRUPO (app-medica) ---
-// Usado para: Autenticación (Auth) y Base de Datos (Firestore)
+/** Configuración del proyecto grupal para Auth y Firestore */
 const firebaseConfigGroup = {
   apiKey: "REDACTED",
   authDomain: "app-medica-3d3be.firebaseapp.com",
@@ -16,8 +23,7 @@ const firebaseConfigGroup = {
   measurementId: "G-P9VGFBW5NE"
 };
 
-// --- 2. CONFIGURACIÓN DE TU PROYECTO PRIVADO (claridoc-backend-kevin) ---
-// Usado para: Almacenamiento de Archivos (Storage)
+/** Configuración del proyecto privado para Storage de archivos */
 const firebaseConfigPrivate = {
   apiKey: "REDACTED",
   authDomain: "claridoc-backend-kevin.firebaseapp.com",
@@ -28,34 +34,22 @@ const firebaseConfigPrivate = {
   measurementId: "G-6PD65WV2GX"
 };
 
-// --- INICIALIZACIÓN DE APPS ---
-
-// 1. Inicializamos la App Principal (Grupo) normalmente
 const appGroup = initializeApp(firebaseConfigGroup);
-
-// 2. Inicializamos la App Secundaria (Privada)
-// ¡IMPORTANTE!: Le damos un nombre ("privateApp") para que Firebase no se confunda
 const appPrivate = initializeApp(firebaseConfigPrivate, "privateApp");
 
-
-// --- EXPORTACIÓN DE SERVICIOS ---
-
-// Auth y Firestore usan el proyecto del GRUPO
 const auth = getAuth(appGroup);
 export const db = getFirestore(appGroup);
-
-// Storage usa TU proyecto PRIVADO (Aquí está el truco)
 export const storage = getStorage(appPrivate);
-
-
-// --- LÓGICA DE AUTENTICACIÓN (Se mantiene igual) ---
 
 const googleProvider = new GoogleAuthProvider();
 
+/**
+ * Inicia sesión con Google mediante ventana emergente.
+ * @param {Function} setError - Setter de estado para mostrar errores
+ */
 const handleGoogleLogin = async (setError) => {
     try {
-        const result = await signInWithPopup(auth, googleProvider);
-        console.log('Google Sign-In:', result.user);
+        await signInWithPopup(auth, googleProvider);
         setError('');
     } catch (err) {
         console.log(err);
@@ -63,15 +57,18 @@ const handleGoogleLogin = async (setError) => {
     }
 }
 
-// HANDLE LOGIN USING EMAIL AND PASSWORD
+/**
+ * Inicia sesión con email y contraseña.
+ * @param {Event} e - Evento del formulario
+ * @param {Function} setError - Setter de estado para mostrar errores
+ */
 const handleSubmit = async (e, setError) => {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
 
     try {
-        const userCred = await signInWithEmailAndPassword(auth, email, password);
-        console.log('User signed in:', userCred.user);
+        await signInWithEmailAndPassword(auth, email, password);
         setError('');
     } catch (err) {
         console.log(err);

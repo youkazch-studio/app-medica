@@ -1,4 +1,15 @@
-// src/pages/LandingPage.jsx
+/**
+ * Página de aterrizaje (Landing Page) pública de ClariDoc.
+ *
+ * Muestra el marketing de la aplicación:
+ * - Hero con CTA
+ * - "Cómo funciona" (3 pasos)
+ * - Beneficios clave
+ * - Sección de privacidad
+ * - CTA final
+ *
+ * Usa Framer Motion para animaciones basadas en scroll.
+ */
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';

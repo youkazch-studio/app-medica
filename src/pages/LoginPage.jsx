@@ -1,4 +1,10 @@
-// src/pages/LoginPage.jsx
+/**
+ * Página de inicio de sesión con dos métodos de autenticación:
+ * - Email y contraseña
+ * - Google Sign-In (ventana emergente)
+ *
+ * Redirige a /chat si ya hay una sesión activa (manejado en App.jsx).
+ */
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";

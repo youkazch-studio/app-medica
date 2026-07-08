@@ -1,8 +1,16 @@
-// src/components/Header.jsx
+/**
+ * Barra superior de la interfaz de chat.
+ *
+ * Muestra el título del chat activo, tiempo relativo desde su creación,
+ * y el avatar/nombre del usuario autenticado.
+ * Incluye un botón de menú hamburguesa para la sidebar en móviles.
+ *
+ * @param {{ chatData: object|null, onToggleMenu: Function }} props
+ */
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
-import { FiMenu } from 'react-icons/fi'; // Icono hamburguesa
+import { FiMenu } from 'react-icons/fi';
 import { formatRelativeTime } from '../services/chatService';
 
 const Header = ({ chatData, onToggleMenu }) => {

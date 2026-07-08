@@ -1,13 +1,24 @@
-// src/components/Sidebar.jsx
+/**
+ * Panel lateral izquierdo con el historial de chats del usuario.
+ *
+ * Incluye:
+ * - Logo y nombre de la app
+ * - Botón para nuevo chat
+ * - Enlace a "Mi Agenda" (TrackingPage)
+ * - Lista de chats ordenada por última interacción (con scroll)
+ * - Botón de cerrar sesión
+ *
+ * @param {{ chats: Array, selectedChatId: string|null, onSelectChat: Function, onNewChat: Function, onDeleteChat: Function }} props
+ */
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase/config';
-import { FiPlus, FiLogOut, FiMessageSquare, FiTrash2, FiActivity } from 'react-icons/fi'; // Agregamos FiActivity
-import logo from '../assets/logodefinitivo.png'; // Asegúrate de que la ruta sea correcta
+import { FiPlus, FiLogOut, FiMessageSquare, FiTrash2, FiActivity } from 'react-icons/fi';
+import logo from '../assets/logodefinitivo.png';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom'; // Importamos el hook de navegación
+import { useNavigate } from 'react-router-dom';
 
 const Sidebar = ({ chats, selectedChatId, onSelectChat, onNewChat, onDeleteChat }) => {
-  const navigate = useNavigate(); // Hook para navegar
+  const navigate = useNavigate();
   
   const handleLogout = async () => {
     try { await signOut(auth); } catch (error) { console.error(error); }

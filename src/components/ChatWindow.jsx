@@ -1,4 +1,15 @@
-// src/components/ChatWindow.jsx
+/**
+ * Componente principal de la ventana de chat.
+ *
+ * Gestiona la interacción completa con el usuario:
+ * - Visualización de mensajes (Markdown, archivos adjuntos)
+ * - Envío de mensajes y archivos a la IA (Gemini via Cloud Function)
+ * - Parseo de marcadores IA: MAPA, PLAN_JSON y SUGERENCIAS
+ * - Carga de mensajes anteriores (paginación)
+ * - Modales de avatar, mapa y confirmación de planes
+ *
+ * @param {{ chatId: string|null, onChatCreated: Function }} props
+ */
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   FiSend, FiPaperclip, FiX, FiFileText, FiArrowRight, 
@@ -10,8 +21,7 @@ import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import { sendMessageToFirestore, subscribeToChatMessages, createNewChat } from '../services/chatService';
 import { uploadFileToStorage, compressImage, fileToBase64, extractTextFromDocx } from '../services/fileService';
-import { saveHealthPlan, checkDuplicatePlan } from '../services/trackingService'; 
-// ----------------------------------------------
+import { saveHealthPlan, checkDuplicatePlan } from '../services/trackingService';
 import AvatarSpeakingModal from './AvatarSpeakingModal';
 import MapModal from './MapModal';
 import { useAuth } from '../context/AuthContext';

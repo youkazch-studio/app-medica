@@ -1,18 +1,30 @@
+/**
+ * Servicio CRUD para planes de salud (tracking) en Firestore.
+ *
+ * Permite guardar, leer, eliminar y actualizar el progreso diario
+ * de los planes generados por la IA (medicación, dieta, ejercicio).
+ *
+ * @module trackingService
+ */
 import { db } from '../firebase/config';
-import { collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, deleteDoc, getDoc } from 'firebase/firestore';
-import { getDocs } from 'firebase/firestore';
+import { collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp, doc, updateDoc, deleteDoc, getDoc, getDocs } from 'firebase/firestore';
 
-// 1. Guardar un nuevo plan (Ahora recibe sourceChatId)
+/**
+ * Guarda un nuevo plan de salud para el usuario.
+ * @param {string} userId - ID del usuario
+ * @param {object} planData - Datos del plan (titulo, tipo, detalles, duracion)
+ * @param {string|null} sourceChatId - ID del chat que originó el plan (opcional)
+ * @returns {Promise<boolean>} true si se guardó correctamente
+ */
 export const saveHealthPlan = async (userId, planData, sourceChatId) => {
   try {
     const plansRef = collection(db, "users", userId, "health_plans");
     await addDoc(plansRef, {
       ...planData,
-      sourceChatId: sourceChatId || null, // Guardamos el origen
+      sourceChatId: sourceChatId || null,
       createdAt: serverTimestamp(),
       active: true,
-      // Estructura optimizada: progress: { "2025-11-27": [0, 2] } (Indices completados)
-      progress: {} 
+      progress: {}
     });
     return true;
   } catch (error) {
@@ -21,7 +33,12 @@ export const saveHealthPlan = async (userId, planData, sourceChatId) => {
   }
 };
 
-// 2. Leer planes (Igual que antes)
+/**
+ * Se suscribe en tiempo real a los planes de salud del usuario.
+ * @param {string} userId - ID del usuario
+ * @param {Function} callback - Función que recibe el array de planes
+ * @returns {Function} Función para desuscribirse
+ */
 export const subscribeToHealthPlans = (userId, callback) => {
   const plansRef = collection(db, "users", userId, "health_plans");
   const q = query(plansRef, orderBy("createdAt", "desc"));
@@ -35,7 +52,13 @@ export const subscribeToHealthPlans = (userId, callback) => {
   });
 };
 
-// 3. Marcar/Desmarcar tarea (NUEVO)
+/**
+ * Marca o desmarca una tarea como completada para el día de hoy.
+ * Usa un mapa de fechas a índices de tareas completadas: { "YYYY-MM-DD": [0, 2] }
+ * @param {string} userId - ID del usuario
+ * @param {string} planId - ID del plan
+ * @param {number} taskIndex - Índice de la tarea dentro del array detalles
+ */
 export const toggleTaskCompletion = async (userId, planId, taskIndex) => {
   try {
     const planRef = doc(db, "users", userId, "health_plans", planId);
@@ -43,20 +66,16 @@ export const toggleTaskCompletion = async (userId, planId, taskIndex) => {
     
     if (planSnap.exists()) {
       const data = planSnap.data();
-      const today = new Date().toISOString().split('T')[0]; // "2025-11-27"
+      const today = new Date().toISOString().split('T')[0];
       
-      // Obtenemos el array de tareas completadas hoy (o vacío si no existe)
       let completedToday = data.progress && data.progress[today] ? [...data.progress[today]] : [];
 
       if (completedToday.includes(taskIndex)) {
-        // Si ya está, lo quitamos (desmarcar)
         completedToday = completedToday.filter(i => i !== taskIndex);
       } else {
-        // Si no está, lo agregamos (marcar)
         completedToday.push(taskIndex);
       }
 
-      // Actualizamos solo ese campo en la BD (Optimizado)
       await updateDoc(planRef, {
         [`progress.${today}`]: completedToday
       });
@@ -66,7 +85,11 @@ export const toggleTaskCompletion = async (userId, planId, taskIndex) => {
   }
 };
 
-// 4. Eliminar plan (Igual que antes)
+/**
+ * Elimina un plan de salud por su ID.
+ * @param {string} userId - ID del usuario
+ * @param {string} planId - ID del plan a eliminar
+ */
 export const deleteHealthPlan = async (userId, planId) => {
     try {
         const planRef = doc(db, "users", userId, "health_plans", planId);
@@ -76,11 +99,15 @@ export const deleteHealthPlan = async (userId, planId) => {
     }
 };
 
-// 5. Verificar si existe un plan duplicado
+/**
+ * Verifica si ya existe un plan activo con el mismo título (para evitar duplicados).
+ * @param {string} userId - ID del usuario
+ * @param {string} planTitle - Título del plan a verificar
+ * @returns {Promise<boolean>} true si ya existe un plan con ese título
+ */
 export const checkDuplicatePlan = async (userId, planTitle) => {
   try {
     const plansRef = collection(db, "users", userId, "health_plans");
-    // Buscamos planes activos con el mismo título
     const q = query(
       plansRef, 
       where("titulo", "==", planTitle),
@@ -88,9 +115,9 @@ export const checkDuplicatePlan = async (userId, planTitle) => {
     );
     
     const snapshot = await getDocs(q);
-    return !snapshot.empty; // Retorna TRUE si ya existe, FALSE si no.
+    return !snapshot.empty;
   } catch (error) {
     console.error("Error verificando duplicados:", error);
-    return false; // Ante la duda, permitimos guardar
+    return false;
   }
 };

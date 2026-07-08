@@ -1,42 +1,44 @@
-// src/context/AuthContext.jsx
-
+/**
+ * Proveedor de contexto de autenticación de Firebase.
+ *
+ * Escucha los cambios en el estado de autenticación (onAuthStateChanged)
+ * y provee el usuario actual a toda la aplicación.
+ *
+ * @component AuthProvider - Envuelve la app y expone el usuario via useAuth()
+ * @hook useAuth() - Hook personalizado para acceder al usuario autenticado
+ */
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '../firebase/config'; // Asegúrate que la ruta sea correcta
+import { auth } from '../firebase/config';
 
-// 1. Creamos el contexto
 const AuthContext = createContext();
 
-// 2. Creamos un hook personalizado para usar el contexto fácilmente
+/**
+ * Hook para acceder al contexto de autenticación desde cualquier componente.
+ * @returns {{ user: import('firebase/auth').User | null }} Objeto con el usuario actual
+ */
 export const useAuth = () => {
   return useContext(AuthContext);
 };
 
-// 3. Creamos el componente Proveedor
+/**
+ * Proveedor que observa el estado de autenticación y lo propaga por la app.
+ * @param {{ children: React.ReactNode }} props
+ */
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // Para saber si aún estamos verificando la sesión
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // onAuthStateChanged es un observador de Firebase que se activa
-    // cada vez que el estado de autenticación cambia (login/logout).
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      setLoading(false); // Terminamos de cargar
+      setLoading(false);
     });
-
-    // Nos desuscribimos del observador cuando el componente se desmonta
     return () => unsubscribe();
   }, []);
 
-  // El valor que proveeremos a los componentes hijos
-  const value = {
-    user,
-  };
-
-  // No mostramos la app hasta que sepamos si hay un usuario o no
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{ user }}>
       {!loading && children}
     </AuthContext.Provider>
   );

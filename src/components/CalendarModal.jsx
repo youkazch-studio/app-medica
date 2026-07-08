@@ -1,4 +1,14 @@
-// src/components/CalendarModal.jsx
+/**
+ * Modal de calendario mensual que muestra el historial de progreso de un plan.
+ *
+ * Cada día se colorea según el nivel de cumplimiento:
+ * - Verde: Completado (todas las tareas hechas)
+ * - Amarillo: Parcial (algunas tareas completadas)
+ * - Rojo: Pendiente (ninguna tarea hecha)
+ * - Gris: Futuro o anterior a la creación del plan
+ *
+ * @param {{ isOpen: boolean, onClose: Function, plan: object }} props
+ */
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiX, FiChevronLeft, FiChevronRight, FiCheck } from 'react-icons/fi';

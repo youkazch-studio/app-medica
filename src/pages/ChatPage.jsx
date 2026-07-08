@@ -1,5 +1,11 @@
-// src/pages/ChatPage.jsx
-import React, { useState, useEffect, useRef } from 'react'; // Importamos useRef
+/**
+ * Página principal del chat (requiere autenticación).
+ *
+ * Orquesta los componentes Sidebar, Header, ChatWindow y ConfirmModal.
+ * Maneja la selección de chats, carga de historial, navegación desde
+ * la agenda, y eliminación de chats con confirmación.
+ */
+import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import ChatWindow from '../components/ChatWindow';

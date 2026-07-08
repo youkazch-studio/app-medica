@@ -1,4 +1,11 @@
-// src/components/ConfirmModal.jsx
+/**
+ * Modal de confirmación reutilizable para acciones destructivas.
+ *
+ * Muestra un título, mensaje, y botones de "Cancelar" / "Eliminar"
+ * con animaciones de entrada/salida mediante Framer Motion.
+ *
+ * @param {{ isOpen: boolean, onClose: Function, onConfirm: Function, title: string, message: string }} props
+ */
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiAlertTriangle } from 'react-icons/fi';

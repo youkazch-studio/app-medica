@@ -1,4 +1,14 @@
-// src/pages/TrackingPage.jsx
+/**
+ * Página "Mi Agenda" para seguimiento diario de planes de salud.
+ *
+ * Muestra tarjetas de planes (medicación, dieta, ejercicio) con:
+ * - Checklist diario de tareas (marcar/desmarcar)
+ * - Barra de progreso
+ * - Calendario mensual de historial
+ * - Coach con avatar (TTS)
+ * - Confeti al completar todos los planes del día
+ * - Navegación al chat de origen
+ */
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -8,7 +18,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import logo from '../assets/logodefinitivo.png'; 
 import ConfirmModal from '../components/ConfirmModal';
 import AvatarSpeakingModal from '../components/AvatarSpeakingModal';
-import CalendarModal from '../components/CalendarModal'; // <--- 1. IMPORTAR
+import CalendarModal from '../components/CalendarModal';
 import Confetti from 'react-confetti'; 
 import { useWindowSize } from 'react-use';
 

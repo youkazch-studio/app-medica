@@ -1,4 +1,12 @@
-// src/components/MapModal.jsx
+/**
+ * Modal de mapa interactivo para encontrar centros de salud cercanos.
+ *
+ * Usa Leaflet con OpenStreetMap, Overpass API (búsqueda por categoría)
+ * y Nominatim (búsqueda por texto como respaldo).
+ * Incluye un diccionario español → etiquetas OSM con más de 50 términos médicos.
+ *
+ * @param {{ isOpen: boolean, onClose: Function, searchQuery: string }} props
+ */
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { FiX, FiMapPin, FiNavigation } from 'react-icons/fi';
@@ -17,9 +25,7 @@ let DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-// --- DICCIONARIO DE TRADUCCIÓN (Español -> OSM Tags) ---
-// --- DICCIONARIO DE TRADUCCIÓN MEJORADO (Español -> OSM Tags) ---
-// --- DICCIONARIO DE TRADUCCIÓN EXTENDIDO (Español -> OSM Tags) ---
+/** Traducción de términos médicos en español a tags de OpenStreetMap */
 const CATEGORY_MAPPING = {
   // --- 1. GENERAL ---
   'hospital': 'amenity=hospital',

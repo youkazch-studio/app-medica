@@ -1,4 +1,17 @@
-// functions/index.js
+/**
+ * Cloud Function: askClariDoc
+ *
+ * Endpoint HTTP que recibe un mensaje del usuario (con o sin archivo adjunto)
+ * y el historial de conversación, y retorna una respuesta generada por
+ * Google Gemini 2.5 Flash.
+ *
+ * La IA responde con Markdown y puede incluir marcadores estructurados:
+ * - |||MAPA: [término]||| → El frontend abre el modal de mapa
+ * - |||PLAN_JSON: {...}||| → El frontend muestra confirmación de plan
+ * - |||SUGERENCIAS||| → El frontend muestra preguntas de seguimiento
+ *
+ * @see ChatWindow.jsx para el parseo de la respuesta
+ */
 const { onRequest } = require("firebase-functions/v2/https");
 const { defineString } = require("firebase-functions/params");
 const { GoogleGenerativeAI } = require("@google/generative-ai");

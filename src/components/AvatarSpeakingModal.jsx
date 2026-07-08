@@ -1,9 +1,18 @@
-// src/components/AvatarSpeakingModal.jsx
+/**
+ * Modal de avatar animado con Text-To-Speech.
+ *
+ * Muestra un video en loop del avatar mientras reproduce el texto
+ * mediante la Web Speech API. Soporta 3 modos con diferentes videos:
+ * - 'chat': Conversación general (avatar_speaking.mp4)
+ * - 'reading': Lectura de plan de salud (avatar_reading.mp4)
+ * - 'celebrating': Celebración por tareas completadas (avatar_celebrating.mp4)
+ *
+ * @param {{ isOpen: boolean, onClose: Function, textToSpeak: string, mode?: 'chat'|'reading'|'celebrating' }} props
+ */
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiX, FiVolume2 } from 'react-icons/fi';
 
-// AHORA SOPORTA 3 MODOS: 'chat' (default), 'reading', 'celebrating'
 const AvatarSpeakingModal = ({ isOpen, onClose, textToSpeak, mode = 'chat' }) => {
   const videoRef = useRef(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
