@@ -1,1 +1,36 @@
+/* src/index.css */
 @import "tailwindcss";
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f0f0f0;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #c1c1c1;
+  border-radius: 20px;
+  border: 2px solid #f0f0f0;
+}
+
+/* Animación de pulso azul para el avatar hablando */
+@keyframes speechPulse {
+  0% {
+    box-shadow: 0 0 0 0px rgba(80, 227, 194, 0.4); /* Azul claro #50E3C2 */
+    border-color: #082F6D; /* Azul oscuro */
+  }
+  50% {
+    box-shadow: 0 0 20px 10px rgba(80, 227, 194, 0.6);
+    border-color: #50E3C2;
+  }
+  100% {
+    box-shadow: 0 0 0 0px rgba(80, 227, 194, 0.4);
+    border-color: #082F6D;
+  }
+}
+
+.speaking-active {
+  animation: speechPulse 1.2s infinite ease-in-out;
+  border-width: 4px;
+  border-style: solid;
+}
