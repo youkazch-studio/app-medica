@@ -12,26 +12,26 @@ import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvide
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-/** Configuración del proyecto grupal para Auth y Firestore */
+/** Lee las variables de entorno (VITE_) definidas en .env */
 const firebaseConfigGroup = {
-  apiKey: "REDACTED",
-  authDomain: "app-medica-3d3be.firebaseapp.com",
-  projectId: "app-medica-3d3be",
-  storageBucket: "app-medica-3d3be.firebasestorage.app",
-  messagingSenderId: "853797355557",
-  appId: "1:853797355557:web:7264fb49f796b7770ebfcc",
-  measurementId: "G-P9VGFBW5NE"
+  apiKey: import.meta.env.VITE_FIREBASE_GROUP_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_GROUP_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_GROUP_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_GROUP_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_GROUP_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_GROUP_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_GROUP_MEASUREMENT_ID
 };
 
 /** Configuración del proyecto privado para Storage de archivos */
 const firebaseConfigPrivate = {
-  apiKey: "REDACTED",
-  authDomain: "claridoc-backend-kevin.firebaseapp.com",
-  projectId: "claridoc-backend-kevin",
-  storageBucket: "claridoc-backend-kevin.firebasestorage.app",
-  messagingSenderId: "872417000402",
-  appId: "1:872417000402:web:15e4c83b329e921f39e60b",
-  measurementId: "G-6PD65WV2GX"
+  apiKey: import.meta.env.VITE_FIREBASE_PRIVATE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_PRIVATE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PRIVATE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_PRIVATE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_PRIVATE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_PRIVATE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_PRIVATE_MEASUREMENT_ID
 };
 
 const appGroup = initializeApp(firebaseConfigGroup);
